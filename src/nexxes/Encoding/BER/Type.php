@@ -3,7 +3,9 @@
  * $URL$
  * $Copyright$ */
 
-interface BER_Type {
+namespace nexxes\Encoding\BER;
+
+interface Type {
 	/**
 	 * Set the values after creating the empty object
 	 */

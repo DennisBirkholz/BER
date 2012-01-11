@@ -34,7 +34,7 @@ class BooleanTest extends \PHPUnit_Framework_TestCase {
 		
 		$bool = new Boolean();
 		$bool->parse($data, 0, 1);
-		$this->assertTrue($bool->value);
+		$this->assertTrue($bool->value());
 	}
 	
 	public function testParseFalse() {
@@ -42,7 +42,7 @@ class BooleanTest extends \PHPUnit_Framework_TestCase {
 		
 		$bool = new Boolean();
 		$bool->parse($data, 0, 1);
-		$this->assertFalse($bool->value);
+		$this->assertFalse($bool->value());
 	}
 	
 	/**

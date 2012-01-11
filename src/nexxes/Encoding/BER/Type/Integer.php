@@ -13,7 +13,7 @@ class Integer implements BER\Type {
 	const CLS	= BER\CLASS_UNIVERSAL;
 	const TAG	= 2;
 	
-	public $value = 0;
+	protected $value = 0;
 	
 	
 	public function init($value) {
@@ -98,6 +98,10 @@ class Integer implements BER\Type {
 		}*/
 		
 		return $r;
+	}
+	
+	public function value() {
+		return $this->value;
 	}
 }
 

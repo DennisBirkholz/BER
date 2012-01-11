@@ -20,6 +20,11 @@ interface Type {
 	 * Generate the BER encoding of the object
 	 */
 	public function encode();
+	
+	/**
+	 * Get the value stored in that type
+	 */
+	public function value();
 }
 
 ?>

@@ -1,16 +1,19 @@
 <?php
-/* $Id$
- * $URL$
- * $Copyright$ */
+/* 
+ * (c) 2016 by Dennis Birkholz <dennis@birkholz.biz>
+ * All rights reserved.
+ * For the license to use this code, see the bundled LICENSE file.
+ */
+namespace dennisbirkholz\ber\type;
 
-namespace org\birkholz\Encoding\BER;
-use org\birkholz\Encoding\BER;
+use dennisbirkholz\ber\Type;
 
-class SequenceOf extends BER\Type {
+class SequenceOf extends Type
+{
 	const TYPE	= self::T_CONSTRUCTED;
 	const CLS	= self::C_UNIVERSAL;
 	const TAG	= 16;
-	
+    
 	/**
 	 * Constrain sequence to have a minimum of elements. 0 means no minimum.
 	 */
@@ -32,7 +35,8 @@ class SequenceOf extends BER\Type {
 	public $values = array();
 	
 	
-	public function init($value) {
+	public function init($value)
+    {
 		if (!is_array($value)) {
 			// TODO: handle error
 			return;
@@ -41,7 +45,8 @@ class SequenceOf extends BER\Type {
 		$this->value = $value;
 	}
 	
-	public function parse(&$data, $pos = 0, $length = null) {
+	public function parse(&$data, $pos = 0, $length = null)
+    {
 		$allowed = array();
 		
 		// Prepare search array
@@ -85,7 +90,8 @@ class SequenceOf extends BER\Type {
 		}
 	}
 	
-	public function encode() {
+	public function encode()
+    {
 		$return = '';
 		
 		for($i=0; $i<count($this->value); $i++) {

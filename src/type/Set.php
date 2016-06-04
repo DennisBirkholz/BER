@@ -1,11 +1,13 @@
 <?php
-/* $Id$
- * $URL$
- * $Copyright$ */
+/* 
+ * (c) 2016 by Dennis Birkholz <dennis@birkholz.biz>
+ * All rights reserved.
+ * For the license to use this code, see the bundled LICENSE file.
+ */
+namespace dennisbirkholz\ber\type;
 
-namespace org\birkholz\Encoding\BER\Type;
-
-class Set extends Sequence {
+class Set extends Sequence
+{
 	const TYPE	= self::T_CONSTRUCTED;
 	const CLS	= self::C_UNIVERSAL;
 	const TAG	= 17;

@@ -6,6 +6,7 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use dennisbirkholz\ber\Parser;
 use dennisbirkholz\ber\Type;
 
 class SequenceOf extends Type
@@ -35,17 +36,12 @@ class SequenceOf extends Type
 	public $values = array();
 	
 	
-	public function init($value)
+	public function __construct(array $value)
     {
-		if (!is_array($value)) {
-			// TODO: handle error
-			return;
-		}
-		
 		$this->value = $value;
 	}
 	
-	public function parse(&$data, $pos = 0, $length = null)
+	public static function parse(Parser $parser, $data)
     {
 		$allowed = array();
 		
@@ -62,7 +58,7 @@ class SequenceOf extends Type
 		}
 		
 		// Parse elements
-		$elements = BER\Parser::parseToArray($data, $pos, $length);
+		$elements = Parser::parseToArray($data);
 		
 		// Walk elements
 		foreach ($elements AS $element) {
@@ -76,7 +72,7 @@ class SequenceOf extends Type
 			
 			// Create new element and store it
 			$n = new $allowed[$element['type']][$element['class']][$element['tag']]();
-			$n->parse(substr($data, $element['pos'], $element['length']));
+			$n->parse(Parser::substr($data, $element['pos'], $element['length']));
 			$this->values[] =& $n;
 			unset($n);
 		}
@@ -100,4 +96,11 @@ class SequenceOf extends Type
 		
 		return $return;
 	}
+    
+    /**
+     * As encode() is overriden, encodeData() is never called.
+     */
+    protected function encodeData()
+    {
+    }
 }

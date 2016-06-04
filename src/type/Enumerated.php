@@ -6,29 +6,35 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use dennisbirkholz\ber\Parser;
+use dennisbirkholz\ber\Type;
+
 /**
  * An enumerated cannot be instantiated directly as it does not know the valid choices.
  * Extend the Enumerated and fill the choices array to make it work 
  */
 abstract class Enumerated extends Integer
 {
-    const TYPE	= self::T_PRIMITIVE;
-    const CLS	= self::C_UNIVERSAL;
+    const TYPE	= Type::T_PRIMITIVE;
+    const CLS	= Type::C_UNIVERSAL;
     const TAG	= 10;
     
     protected static $choices = array();
     
-    
-    public function parse(&$data, $pos = 0, $length = null)
+    public function __construct($value)
     {
-        parent::parse($data, $pos, $length);
+        parent::{__FUNCTION__}($value);
         $this->verify();
     }
-
-    public function init($v)
+    
+    /**
+     * {@inheritdoc}
+     */
+    public static function parse(Parser $parser, $data)
     {
-        $this->value = $v;
-        $this->verify();
+        $enum = parent::{__FUNCTION__}($parser, $data);
+        $enum->verify();
+        return $enum;
     }
 
     public function value($numerical = false)
@@ -43,7 +49,7 @@ abstract class Enumerated extends Integer
     protected function verify()
     {
         $me = get_class($this);
-        $p =& $me::$choices;
+        $p = $me::$choices;
         $v = $this->value;
         
         // Supplied index is valid

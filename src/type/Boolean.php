@@ -6,38 +6,43 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use dennisbirkholz\ber\Parser;
 use dennisbirkholz\ber\Type;
 
 class Boolean extends Type
 {
-    const TYPE	= self::T_PRIMITIVE;
-    const CLS	= self::C_UNIVERSAL;
+    const TYPE	= Type::T_PRIMITIVE;
+    const CLS	= Type::C_UNIVERSAL;
     const TAG	= 1;
     
-    protected $value = false;
-    
-    
-    public function init($value)
+    public function __construct($value)
     {
         if ($value instanceof self) {
             $this->value = $value->value;
-            return;
         }
         
-        if (!is_bool($value)) {
+        elseif (!is_bool($value)) {
             throw new \InvalidArgumentException('Can not initialize boolean with non-boolean value');
         }
         
-        $this->value = $value;
+        else {
+            $this->value = $value;
+        }
     }
-
-    public function parse(&$data, $pos = 0, $length = null)
+    
+    /**
+     * @param string $data
+     * @param int $pos
+     * @param int $length
+     * @return static
+     */
+    public static function parse(Parser $parser, $data)
     {
-        if ($length !== 1) {
+        if (Parser::strlen($data) !== 1) {
             throw new \InvalidArgumentException('Failed to parse boolean data: length must be one byte');
         }
         
-        $this->value = (ord($data[$pos]) !== 0);
+        return new static((ord($data[0]) !== 0));
     }
     
     public function encodeData() {

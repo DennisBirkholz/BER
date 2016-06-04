@@ -29,7 +29,7 @@ abstract class Type
     /**
     * Create a new element from this data (type and length needs to be stripped before passing)
     */
-    abstract public function parse(&$data, $pos = 0, $length = null);
+    //abstract public function parse(&$data, $pos = 0, $length = null);
     
     /**
     * Get the value stored in that type

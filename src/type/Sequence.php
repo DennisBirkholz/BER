@@ -11,8 +11,8 @@ use dennisbirkholz\ber\Type;
 
 class Sequence extends Type implements \ArrayAccess
 {
-    const TYPE	= self::T_CONSTRUCTED;
-    const CLS	= self::C_UNIVERSAL;
+    const TYPE	= Type::T_CONSTRUCTED;
+    const CLS	= Type::C_UNIVERSAL;
     const TAG	= 16;
     
     /**
@@ -32,25 +32,21 @@ class Sequence extends Type implements \ArrayAccess
     
     public $value = null;
     
-    public function init($value) {
-        if (!is_array($value)) {
-            // TODO: handle error
-            return;
-        }
-        
+    public function __construct(array $value) {
         $this->value = $value;
     }
     
-    public function parse(&$data, $pos = 0, $length = null)
+    /**
+     * {@inheritdoc}
+     */
+    public static function parse(Parser $parser, $data)
     {
-        $elements = Parser::parseToArray($data, $pos, $length);
-        
         // Fallback to deprecated behaviour: use global registry to determine types
         if (count(static::$definition) === 0) {
-            $this->value = Parser::parse(mb_substr($data, $pos, $length, 'ASCII'));
-            return;
+            return new static($parser->parse($data));
         }
         
+        $elements = Parser::parseToArray($data);
         if (count($elements) > count(static::$definition)) {
             throw new \Exception('More elements found for this sequence, got #' . count($elements) . ', only #' . count(static::$definition) . ' allowed.');
         }

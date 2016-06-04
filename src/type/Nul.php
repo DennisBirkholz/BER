@@ -6,20 +6,25 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use dennisbirkholz\ber\Parser;
 use dennisbirkholz\ber\Type;
 
 class Nul extends Type
 {
-    const TYPE	= self::T_PRIMITIVE;
-    const CLS	= self::C_UNIVERSAL;
+    const TYPE	= Type::T_PRIMITIVE;
+    const CLS	= Type::C_UNIVERSAL;
     const TAG	= 5;
     
-    public function init($value)
+    public function __construct($value = null)
     {
     }
     
-    public function parse(&$data, $pos = 0, $length = null)
+    /**
+     * {@inheritdoc}
+     */
+    public static function parse(Parser $parser, $data)
     {
+        return new static(null);
     }
     
     public function encodeData()

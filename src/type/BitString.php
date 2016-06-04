@@ -6,6 +6,7 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use dennisbirkholz\ber\Parser;
 use dennisbirkholz\ber\Type;
 
 // Only encoding bitstrings as primitive and not constructed
@@ -19,28 +20,26 @@ class BitString extends Type
     protected $value = array();
     
     
-    public function init($data)
+    public function __construct(array $data)
     {
-        if (!is_array($data)) {
-            throw new \InvalidArgumentException('Need an array of bits for a bitstring');
-        }
-        
         $this->value = $data;
     }
-
-    public function parse(&$data, $pos = 0, $length = null)
+    
+    /**
+     * {@inheritdoc}
+     */
+    public static function parse(Parser $parser, $data)
     {
-        $unusedbits = ord($data[$pos++]);
+        $unusedbits = ord($data[0]);
         
         if (($unusedbits < 0) || ($unusedbits > 7)) {
             throw new \RuntimeException('Parse error, number of unused bits (' . $unusedbits . ') exceeds allowed bounds of 0 <= x <= 7!');
         }
         
-        if (is_null($length)) {
-            $length = strlen($data);
-        }
+        $length = Parser::strlen($data);
+        $value = [];
         
-        for($i=$pos; $i<$length; $i++) {
+        for($i=1; $i<$length; $i++) {
             $c = ord($data[$i]);
             
             // Walk each bit
@@ -50,10 +49,12 @@ class BitString extends Type
                     break;
                 }
                 
-                $this->value[] = (boolean)($c & BIT8);
+                $value[] = (boolean)($c & Parser::BIT8);
                 $c <<= 1;
             }
         }
+        
+        return new static($value);
     }
 
     public function encodeData()

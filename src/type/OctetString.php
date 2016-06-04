@@ -6,6 +6,7 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use dennisbirkholz\ber\Parser;
 use dennisbirkholz\ber\Type;
 
 // Only encoding octetstrings as primitive and not constructed
@@ -19,7 +20,7 @@ class OctetString extends Type
     public $value = '';
     
     
-    public function init($value)
+    public function __construct($value)
     {
         if ($value instanceof self) {
             $this->value = $value->value;
@@ -27,16 +28,15 @@ class OctetString extends Type
             $this->value = $value;
         }
     }
-
-    public function parse(&$data, $pos = 0, $length = null)
+    
+    /**
+     * {@inheritdoc}
+     */
+    public static function parse(Parser $parser, $data)
     {
-        if (is_null($length)) {
-            $length = strlen($data);
-        }
-        
-        $this->value = substr($data, $pos, $length);
+        return new static($data);
     }
-
+    
     public function encodeData()
     {
         return $this->value;

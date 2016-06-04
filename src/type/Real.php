@@ -15,33 +15,28 @@ class Real extends Type
     const CLS	= self::C_UNIVERSAL;
     const TAG	= 9;
     
-    public $value = 0.0;
-    
-    public function init($value)
+    public function __construct($value)
     {
-        if (!is_float($value)) {
-            // TODO: handle error
-            return;
+        if (!is_numeric($value)) {
+            throw new \InvalidArgumentException("Invalid value supplied!");
         }
         
-        $this->value = $value;
+        $this->value = (float)$value;
     }
     
     /**
      * TODO: Implement it!
      */
-    public function parse(&$data, $pos = 0, $length = null)
+    public static function parse(Parser $parse, $data)
     {
-        if (strlen($data) === 1) {
+        if (Parser::strlen($data) === 1) {
             // Plus-infinity
             if (ord($data[0]) === Parser::BIT7) {
-                $this->value = PHP_INT_MAX;
-                return;
+                return new static(INF);
             }
             
             elseif (ord($data[0]) === (Parser::BIT7 & Parser::BIT1)) {
-                $this->value = PHP_INT_MAX+1;
-                return;
+                return new static(-INF);
             }
             
             else {
@@ -53,26 +48,28 @@ class Real extends Type
         if (($data[0] & (Parser::BIT8 & Parser::BIT7)) === 0) {
         }
         
-        $this->value = 0;
+        $value = 0;
         
         // If data starts with a 1, value is negative, invert the 0 so after shifting the number will be negative
         if (ord($data[0]) & Parser::BIT8) {
-            $this->value = ~$this->value;
+            $value = ~$value;
         }
         
         for ($i=0; $i<strlen($data); $i++) {
-            $this->value <<= 8;
-            $this->value += ord($data[$i]);
+            $value <<= 8;
+            $value += ord($data[$i]);
         }
         
         // PHP uses 2-complement to store integers, so no conversion is needed here
         // Negative
         //if (ord($data[0]) & Parser::BIT8) {
         //	print "NEGATIVE\n";
-        //	$this->value--;
-        //	$this->value = ~$this->value;
-        //	$this->value *= -1;
+        //	$value--;
+        //	$value = ~$value;
+        //	$value *= -1;
         //}
+        
+        return new static($value);
     }
     
     public function encodeData()

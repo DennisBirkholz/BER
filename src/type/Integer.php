@@ -15,49 +15,49 @@ class Integer extends Type
     const CLS	= self::C_UNIVERSAL;
     const TAG	= 2;
     
-    protected $value = 0;
-    
-    
-    public function init($value)
+    public function __construct($value)
     {
         if ($value instanceof self) {
             $this->value = $value->value;
-            return;
         }
         
-        if (!is_int($value)) {
+        elseif (!is_int($value)) {
             throw new \InvalidArgumentException('Illegal value for class ' . __CLASS__);
         }
         
-        $this->value = $value;
-    }
-
-    public function parse(&$data, $pos = 0, $length = null)
-    {
-        $this->value = 0;
-        
-        if (is_null($length)) {
-            $length = strlen($data) - $pos;
+        else {
+            $this->value = $value;
         }
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public static function parse(Parser $parser, $data)
+    {
+        $value = 0;
+        $length = Parser::strlen($data);
         
         // If data starts with a 1, value is negative, invert the 0 so after shifting the number will be negative
-        if (ord($data[$pos]) & Parser::BIT8) {
-            $this->value = ~$this->value;
+        if (ord($data[0]) & Parser::BIT8) {
+            $value = ~$value;
         }
         
-        for ($i=0; $i<$length; $i++,$pos++) {
-            $this->value <<= 8;
-            $this->value += ord($data[$pos]);
+        for ($i=0; $i<$length; $i++) {
+            $value <<= 8;
+            $value += ord($data[$i]);
         }
         
         // PHP uses 2-complement to store integers, so no conversion is needed here
         // Negative
         //if (ord($data[0]) & Parser::BIT8) {
         //	print "NEGATIVE\n";
-        //	$this->value--;
-        //	$this->value = ~$this->value;
-        //	$this->value *= -1;
+        //	$value--;
+        //	$value = ~$value;
+        //	$value *= -1;
         //}
+        
+        return new static($value);
     }
     
     

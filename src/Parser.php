@@ -9,7 +9,7 @@ namespace dennisbirkholz\ber;
 /**
  * @see http://www.itu.int/ITU-T/studygroups/com17/languages/X.690-0207.pdf
  */
-abstract class Parser
+class Parser
 {
     const BIT1 =   1;
     const BIT2 =   2;
@@ -19,6 +19,15 @@ abstract class Parser
     const BIT6 =  32;
     const BIT7 =  64;
     const BIT8 = 128;
+    
+    const NOT_BIT1 = (~self::BIT1 & 0xFF);
+    const NOT_BIT2 = (~self::BIT2 & 0xFF);
+    const NOT_BIT3 = (~self::BIT3 & 0xFF);
+    const NOT_BIT4 = (~self::BIT4 & 0xFF);
+    const NOT_BIT5 = (~self::BIT5 & 0xFF);
+    const NOT_BIT6 = (~self::BIT6 & 0xFF);
+    const NOT_BIT7 = (~self::BIT7 & 0xFF);
+    const NOT_BIT8 = (~self::BIT8 & 0xFF);
     
     // Contains mappings of types to class names
     protected static $registry = [
@@ -77,7 +86,7 @@ abstract class Parser
     {
     }
     
-    public static function parse($data, $context = array())
+    public function parse($data, $context = array())
     {
         $elements = self::parseToArray($data);
         $r = array();
@@ -97,9 +106,7 @@ abstract class Parser
             }
             
             if ($newclass) {
-                $obj = new $newclass();
-                $obj->parse($data, $element['pos'], $element['length']);
-                $r[] = $obj;
+                $r[] = $newclass::parse($this, self::substr($data, $element['pos'], $element['length']));
             }
             
             else {
@@ -222,5 +229,35 @@ abstract class Parser
         }
         
         return $length;
+    }
+    
+    /**
+     * Get the number of bytes of the supplied string.
+     * Required to circumvent multibyte string function overloading.
+     * 
+     * @param string $string
+     * @return int
+     */
+    public static final function strlen($string)
+    {
+        return (function_exists('\mb_strlen') ? \mb_strlen($string, 'ASCII') : \strlen($string));
+    }
+    
+    /**
+     * Get a substring of a binary string.
+     * Required to circumvent multibyte string function overloading.
+     * 
+     * @param string $string
+     * @param int $offset
+     * @param int|null $length
+     * @return string
+     */
+    public static final function substr($string, $offset, $length = null)
+    {
+        return (
+            function_exists('\mb_substr')
+            ? \mb_substr($string, $offset, $length, 'ASCII')
+            : \substr($string, $offset, $length)
+        );
     }
 }

@@ -6,6 +6,8 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use \dennisbirkholz\ber\Parser;
+
 abstract class TestHelper
 {
     /**
@@ -14,11 +16,11 @@ abstract class TestHelper
     public static function hex2str($hex)
     {
         if ($hex[1] == 'x') {
-            $hex = mb_substr($hex, 2, null, 'ASCII');
+            $hex = Parser::substr($hex, 2);
         }
         
         $position = 0;
-        $string_length = mb_strlen($hex, 'ASCII');
+        $string_length = Parser::strlen($hex);
         $return = '';
         
         while ($position < $string_length) {
@@ -30,7 +32,7 @@ abstract class TestHelper
     
     public static function str2hex($string)
     {
-        $count = mb_strlen($string, 'ASCII');
+        $count = Parser::strlen($string);
         $r = '0x';
         
         for ($i=0; $i<$count; $i++) {

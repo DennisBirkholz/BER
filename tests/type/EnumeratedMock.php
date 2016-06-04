@@ -6,10 +6,11 @@
  */
 namespace dennisbirkholz\ber\type;
 
-class EnumeratedMock extends Enumerated {
-	public static $choices = array(
-		0	=> 'choice1',
-		1	=> 'choice2',
-		2	=> 'choice3',
-	);
+class EnumeratedMock extends Enumerated
+{
+    public static $choices = array(
+        0	=> 'choice1',
+        1	=> 'choice2',
+        2	=> 'choice3',
+    );
 }

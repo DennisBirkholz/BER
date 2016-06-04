@@ -6,6 +6,8 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use \dennisbirkholz\ber\Parser;
+
 class BitStringTest extends \PHPUnit_Framework_TestCase
 {
     public function testBitString1Bit()
@@ -66,14 +68,13 @@ class BitStringTest extends \PHPUnit_Framework_TestCase
             $values = $this->parseValueToArray($i, $bits);
             $parsed = $this->encodeValuefromArray($values, $bits);
             
-            $t = new BitString();
-            $t->init($values);
+            $t = new BitString($values);
             $encoded = $t->encode();
             
             $this->assertEquals($encoded, $parsed, 'Encoding mismatch: is ' . TestHelper::str2hex($encoded) . ', should ' . TestHelper::str2hex($parsed));
             
-            $t = new BitString();
-            $t->parse($parsed, 2);
+            $parser = new Parser();
+            $t = $parser->parse($parsed)[0];
             $this->assertEquals($values, $t->value(), 'Decoding mismatch: is ' . TestHelper::arr2bin($t->value()) . ', should ' . TestHelper::arr2bin($values));
         }
     }

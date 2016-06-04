@@ -6,59 +6,68 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use \dennisbirkholz\ber\Parser;
+
 class BooleanTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @test
+     */
     public function testInitTrue()
     {
-        $bool = new Boolean();
-        $bool->init(true);
+        $bool = new Boolean(true);
         $this->assertEquals($bool->encode(), TestHelper::hex2Str('0x0101FF'));
     }
     
+    /**
+     * @test
+     */
     public function testInitFalse()
     {
-        $bool = new Boolean();
-        $bool->init(false);
+        $bool = new Boolean(false);
         $this->assertEquals($bool->encode(), TestHelper::hex2Str('0x010100'));
     }
     
     /**
-     * @expectedException Exception
+     * @test
      */
     public function testInitIllegal()
     {
-        $bool = new Boolean();
-        $bool->init("invalid");
+        $this->expectException(\Exception::class);
+        new Boolean("invalid");
     }
     
+    /**
+     * @test
+     */
     public function testParseTrue()
     {
         // Everything from 0x01 - 0xFF must be true
         for ($i=0x01; $i<=0xFF; $i++) {
             $data = chr($i);
-            $bool = new Boolean();
-            $bool->parse($data, 0, 1);
+            $bool = Boolean::parse(new Parser(), $data, 0, 1);
             $this->assertTrue($bool->value());
         }
     }
     
+    /**
+     * @test
+     */
     public function testParseFalse()
     {
         $data = chr(0x00);
         
-        $bool = new Boolean();
-        $bool->parse($data, 0, 1);
+        $bool = Boolean::parse(new Parser(), $data, 0, 1);
         $this->assertFalse($bool->value());
     }
     
     /**
-     * @expectedException Exception
+     * @test
      */
-    public function testParseIllegal()
+    public function testParseInvalidLength()
     {
+        $this->expectException(\Exception::class);
         $data = "invalid";
-        
-        $bool = new Boolean();
-        $bool->parse($data, 0, strlen($data));
+        Boolean::parse(new Parser(), $data, 0, \strlen($data));
     }
 }

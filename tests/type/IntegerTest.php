@@ -6,6 +6,8 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use \dennisbirkholz\ber\Parser;
+
 class IntegerTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -14,7 +16,8 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
     public function testParseValidSamples()
     {
         $dir = new \DirectoryIterator(__DIR__ . DIRECTORY_SEPARATOR . 'samples');
-
+        $parser = new Parser();
+        
         foreach ($values = new \RegexIterator($dir, '/^Integer_valid_/') AS $file) {
             preg_match('/^Integer_valid_([0-9]+)byte_(-?[0-9]+)$/', $file, $matches);
             $bytes = (int)$matches[1];
@@ -22,9 +25,7 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
             
             $data = file_get_contents($file->getPathName());
             
-            $int = new Integer();
-            $int->parse($data, 2, $bytes); // Need to skip 2 from the beginning to ignore tag, class, length, etc
-            
+            $int = $parser->parse($data)[0];
             $this->assertEquals($int->value(), $value);
         }
     }
@@ -46,13 +47,10 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
             
             $reference = file_get_contents($file->getPathName());
             
-            $int = new Integer();
-            $int->init($value);
-            
+            $int = new Integer($value);
             $encoded = $int->encode();
             
-            $this->assertEquals(mb_strlen($reference, 'ASCII'), mb_strlen($encoded, 'ASCII'), "Encoded value $value, expecting $bytes bytes, got " . mb_strlen($encoded, 'ASCII') . ' bytes.');
-            
+            $this->assertEquals(Parser::strlen($reference), Parser::strlen($encoded), "Encoded value $value, expecting $bytes bytes, got " . Parser::strlen($encoded) . ' bytes.');
             $this->assertEquals($reference, $encoded, "Encoded value $value does not match reference.\nReference: " . $this->dump($reference) . "\nEncoded:   " . $this->dump($encoded));
         }
     }
@@ -61,7 +59,7 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
     {
         $r = '';
 
-        for ($i=0; $i<mb_strlen($string, 'ASCII'); $i++) {
+        for ($i=0; $i<Parser::strlen($string); $i++) {
             $r .= decbin(ord($string[$i])) . ' ';
         }
 

@@ -6,6 +6,7 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use \dennisbirkholz\ber\Parser;
 use \dennisbirkholz\ber\Type;
 
 class Placeholder extends Type
@@ -27,7 +28,7 @@ class Placeholder extends Type
     {
     }
     
-    public function parse(&$data, $pos = 0, $length = null)
+    public static function parse(Parser $parser, $data)
     {
     }
 }

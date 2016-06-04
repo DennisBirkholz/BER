@@ -6,7 +6,6 @@
  */
 namespace dennisbirkholz\ber\type;
 
-use dennisbirkholz\ber\Parser;
 use dennisbirkholz\ber\Type;
 
 /**
@@ -23,18 +22,7 @@ abstract class Enumerated extends Integer
     
     public function __construct($value)
     {
-        parent::{__FUNCTION__}($value);
-        $this->verify();
-    }
-    
-    /**
-     * {@inheritdoc}
-     */
-    public static function parse(Parser $parser, $data)
-    {
-        $enum = parent::{__FUNCTION__}($parser, $data);
-        $enum->verify();
-        return $enum;
+        parent::{__FUNCTION__}($this->mapValue($value));
     }
 
     public function value($numerical = false)
@@ -46,25 +34,22 @@ abstract class Enumerated extends Integer
         }
     }
     
-    protected function verify()
+    protected function mapValue($value)
     {
-        $me = get_class($this);
-        $p = $me::$choices;
-        $v = $this->value;
+        $choices = static::$choices;
         
         // Supplied index is valid
-        if (isset($p[$v])) {
-            return true;
+        if (isset($choices[$value])) {
+            return $value;
         }
         
         // Resolve named choice to numerical index
-        elseif (($index = array_search($v, $p, true)) !== false) {
-            $this->value = $index;
-            return true;
+        elseif (($index = array_search($value, $choices, true)) !== false) {
+            return $index;
         }
         
         else {
-            throw new \Exception('Illegal value "' . $v . '" found for sequence.');
+            throw new \Exception('Illegal value "' . $value . '" found for ' . preg_replace('/^\\\\?([^\\\\]+\\\\)*/', '', static::class).'!');
         }
     }
 }

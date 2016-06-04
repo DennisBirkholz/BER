@@ -22,20 +22,20 @@ abstract class Encoder
     {
         $identifier = 0;
         
-        if ($type == TypeInterface::T_CONSTRUCTED) {
-            $identifier |= Parser::BIT6;
+        if ($type == Constants::T_CONSTRUCTED) {
+            $identifier |= Constants::BIT6;
         }
         
-        if ($class == TypeInterface::C_PRIVATE) {
-            $identifier |= (Parser::BIT8 | Parser::BIT7);
+        if ($class == Constants::C_PRIVATE) {
+            $identifier |= (Constants::BIT8 | Constants::BIT7);
         }
         
-        elseif ($class == TypeInterface::C_CONTEXTSPECIFIC) {
-            $identifier |= (Parser::BIT8);
+        elseif ($class == Constants::C_CONTEXTSPECIFIC) {
+            $identifier |= (Constants::BIT8);
         }
         
-        elseif ($class == TypeInterface::C_APPLICATION) {
-            $identifier |= (Parser::BIT7);
+        elseif ($class == Constants::C_APPLICATION) {
+            $identifier |= (Constants::BIT7);
         }
         
         // Low tag, so only a single octet is needed for identifier
@@ -45,13 +45,13 @@ abstract class Encoder
         }
         
         // Indicate multi byte identifier
-        $identifier |= (Parser::BIT5 | Parser::BIT4 | Parser::BIT3 | Parser::BIT2 | Parser::BIT1);
+        $identifier |= (Constants::BIT5 | Constants::BIT4 | Constants::BIT3 | Constants::BIT2 | Constants::BIT1);
         $tag_num = $tag;
-        $tag_str = chr($tag_num & Parser::NOT_BIT8);
+        $tag_str = chr($tag_num & Constants::NOT_BIT8);
         $tag_num >>= 7;
         
         while ($tag_num > 0) {
-            $tag_str = chr(($tag_num & Parser::NOT_BIT8) | Parser::BIT8) . $tag_str;
+            $tag_str = chr(($tag_num & Constants::NOT_BIT8) | Constants::BIT8) . $tag_str;
             $tag_num >>= 7;
         }
         
@@ -80,6 +80,6 @@ abstract class Encoder
         } while ($string_length > 0);
         
         // BIT8 needs to be set as multi byte length indicator
-        return chr(Parser::strlen($return) | Parser::BIT8) . $return;
+        return chr(Parser::strlen($return) | Constants::BIT8) . $return;
     }
 }

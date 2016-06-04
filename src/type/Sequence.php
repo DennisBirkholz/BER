@@ -6,13 +6,14 @@
  */
 namespace dennisbirkholz\ber\type;
 
-use dennisbirkholz\ber\Parser;
-use dennisbirkholz\ber\Type;
+use \dennisbirkholz\ber\Constants;
+use \dennisbirkholz\ber\Parser;
+use \dennisbirkholz\ber\Type;
 
 class Sequence extends Type implements \ArrayAccess
 {
-    const TYPE	= Type::T_CONSTRUCTED;
-    const CLS	= Type::C_UNIVERSAL;
+    const TYPE	= Constants::T_CONSTRUCTED;
+    const CLS	= Constants::C_UNIVERSAL;
     const TAG	= 16;
     
     /**
@@ -138,7 +139,7 @@ class Sequence extends Type implements \ArrayAccess
             }
             
             // On "no-choice" primitive entries we accept primitive php datatypes
-            if ((!is_array($class)) && ($class::TYPE === self::T_PRIMITIVE) && (!$this->$var instanceof $class)) {
+            if ((!is_array($class)) && ($class::TYPE === Constants::T_PRIMITIVE) && (!$this->$var instanceof $class)) {
                 $v = $this->$var;
                 $this->$var = new $class();
                 $this->$var->init($v);
@@ -167,7 +168,7 @@ class Sequence extends Type implements \ArrayAccess
         if (isset($this->$key)) {
             $class = get_class($this->$key);
             
-            if (($class::TYPE === self::T_PRIMITIVE) && isset($this->$key->value)) {
+            if (($class::TYPE === Constants::T_PRIMITIVE) && isset($this->$key->value)) {
                 return $this->$key->value;
             } else {
                 return $this->$key;

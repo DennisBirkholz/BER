@@ -6,7 +6,7 @@
  */
 namespace dennisbirkholz\ber\type;
 
-use dennisbirkholz\ber\Type;
+use \dennisbirkholz\ber\Type;
 
 class Placeholder extends Type
 {

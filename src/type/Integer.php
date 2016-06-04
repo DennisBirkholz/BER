@@ -6,28 +6,23 @@
  */
 namespace dennisbirkholz\ber\type;
 
-use dennisbirkholz\ber\Parser;
-use dennisbirkholz\ber\Type;
+use \dennisbirkholz\ber\Constants;
+use \dennisbirkholz\ber\Parser;
+use \dennisbirkholz\ber\Type;
 
 class Integer extends Type
 {
-    const TYPE	= self::T_PRIMITIVE;
-    const CLS	= self::C_UNIVERSAL;
+    const TYPE	= Constants::T_PRIMITIVE;
+    const CLS	= Constants::C_UNIVERSAL;
     const TAG	= 2;
     
     public function __construct($value)
     {
-        if ($value instanceof self) {
-            $this->value = $value->value;
+        if (!is_int($value)) {
+            throw new \InvalidArgumentException('Illegal value for class ' . static::class);
         }
         
-        elseif (!is_int($value)) {
-            throw new \InvalidArgumentException('Illegal value for class ' . __CLASS__);
-        }
-        
-        else {
-            $this->value = $value;
-        }
+        $this->value = $value;
     }
     
     /**
@@ -39,7 +34,7 @@ class Integer extends Type
         $length = Parser::strlen($data);
         
         // If data starts with a 1, value is negative, invert the 0 so after shifting the number will be negative
-        if (ord($data[0]) & Parser::BIT8) {
+        if (ord($data[0]) & Constants::BIT8) {
             $value = ~$value;
         }
         
@@ -82,11 +77,11 @@ class Integer extends Type
         }
         
         // Need to pad with a byte of zeros so positive number is not mistaken as negative
-        if (($this->value >= 0) && (ord($r[0]) & Parser::BIT8)) {
+        if (($this->value >= 0) && (ord($r[0]) & Constants::BIT8)) {
             $r = chr(0) . $r;
         }
         
-        elseif (($this->value <= 0) && (!(ord($r[0]) & Parser::BIT8))) {
+        elseif (($this->value <= 0) && (!(ord($r[0]) & Constants::BIT8))) {
             $r = chr(0xFF) . $r;
         }
         

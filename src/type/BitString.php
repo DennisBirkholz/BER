@@ -6,14 +6,15 @@
  */
 namespace dennisbirkholz\ber\type;
 
-use dennisbirkholz\ber\Parser;
-use dennisbirkholz\ber\Type;
+use \dennisbirkholz\ber\Constants;
+use \dennisbirkholz\ber\Parser;
+use \dennisbirkholz\ber\Type;
 
 // Only encoding bitstrings as primitive and not constructed
 class BitString extends Type
 {
-    const TYPE	= self::T_PRIMITIVE;
-    const CLS	= self::C_UNIVERSAL;
+    const TYPE	= Constants::T_PRIMITIVE;
+    const CLS	= Constants::C_UNIVERSAL;
     const TAG	= 3;
     
     // A list of booleans
@@ -49,7 +50,7 @@ class BitString extends Type
                     break;
                 }
                 
-                $value[] = (boolean)($c & Parser::BIT8);
+                $value[] = (boolean)($c & Constants::BIT8);
                 $c <<= 1;
             }
         }

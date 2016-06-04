@@ -11,14 +11,6 @@ namespace dennisbirkholz\ber;
  */
 interface TypeInterface
 {
-    const T_PRIMITIVE = 'Primitive';
-    const T_CONSTRUCTED = 'Constructed';
-    
-    const C_UNIVERSAL = 'Universal';
-    const C_APPLICATION = 'Application';
-    const C_CONTEXTSPECIFIC = 'ContextSpecific';
-    const C_PRIVATE = 'Private';
-    
     /**
      * Create a new element from the supplied data.
      * The supplied parser is required so elements that can contain

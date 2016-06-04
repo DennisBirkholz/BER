@@ -6,7 +6,7 @@
  */
 namespace dennisbirkholz\ber\type;
 
-use dennisbirkholz\ber\Type;
+use \dennisbirkholz\ber\Constants;
 
 /**
  * An enumerated cannot be instantiated directly as it does not know the valid choices.
@@ -14,8 +14,8 @@ use dennisbirkholz\ber\Type;
  */
 abstract class Enumerated extends Integer
 {
-    const TYPE	= Type::T_PRIMITIVE;
-    const CLS	= Type::C_UNIVERSAL;
+    const TYPE	= Constants::T_PRIMITIVE;
+    const CLS	= Constants::C_UNIVERSAL;
     const TAG	= 10;
     
     protected static $choices = array();

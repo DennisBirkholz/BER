@@ -6,10 +6,12 @@
  */
 namespace dennisbirkholz\ber\type;
 
+use \dennisbirkholz\ber\Constants;
+
 class Set extends Sequence
 {
-	const TYPE	= self::T_CONSTRUCTED;
-	const CLS	= self::C_UNIVERSAL;
+	const TYPE	= Constants::T_CONSTRUCTED;
+	const CLS	= Constants::C_UNIVERSAL;
 	const TAG	= 17;
 	
 	protected static $randomOrder = true;

@@ -6,13 +6,14 @@
  */
 namespace dennisbirkholz\ber\type;
 
-use dennisbirkholz\ber\Parser;
-use dennisbirkholz\ber\Type;
+use \dennisbirkholz\ber\Constants;
+use \dennisbirkholz\ber\Parser;
+use \dennisbirkholz\ber\Type;
 
 class SequenceOf extends Type
 {
-	const TYPE	= self::T_CONSTRUCTED;
-	const CLS	= self::C_UNIVERSAL;
+	const TYPE	= Constants::T_CONSTRUCTED;
+	const CLS	= Constants::C_UNIVERSAL;
 	const TAG	= 16;
     
 	/**

@@ -11,28 +11,10 @@ namespace dennisbirkholz\ber;
  */
 class Parser
 {
-    const BIT1 =   1;
-    const BIT2 =   2;
-    const BIT3 =   4;
-    const BIT4 =   8;
-    const BIT5 =  16;
-    const BIT6 =  32;
-    const BIT7 =  64;
-    const BIT8 = 128;
-    
-    const NOT_BIT1 = (~self::BIT1 & 0xFF);
-    const NOT_BIT2 = (~self::BIT2 & 0xFF);
-    const NOT_BIT3 = (~self::BIT3 & 0xFF);
-    const NOT_BIT4 = (~self::BIT4 & 0xFF);
-    const NOT_BIT5 = (~self::BIT5 & 0xFF);
-    const NOT_BIT6 = (~self::BIT6 & 0xFF);
-    const NOT_BIT7 = (~self::BIT7 & 0xFF);
-    const NOT_BIT8 = (~self::BIT8 & 0xFF);
-    
     // Contains mappings of types to class names
     protected static $registry = [
-        Type::T_PRIMITIVE => [
-            Type::C_UNIVERSAL       	=> [
+        Constants::T_PRIMITIVE => [
+            Constants::C_UNIVERSAL       => [
                 type\BitString::TAG        => type\BitString::class,
                 type\Boolean::TAG          => type\Boolean::class,
                 type\Enumerated::TAG       => type\Enumerated::class,
@@ -43,20 +25,20 @@ class Parser
                 type\OctetString::TAG      => type\OctetString::class,
                 type\UTF8String::TAG       => type\UTF8String::class,
             ],
-            Type::C_APPLICATION     => [],
-            Type::C_CONTEXTSPECIFIC => [],
-            Type::C_PRIVATE         => [],
+            Constants::C_APPLICATION     => [],
+            Constants::C_CONTEXTSPECIFIC => [],
+            Constants::C_PRIVATE         => [],
         ],
-        Type::T_CONSTRUCTED	=> [
-            Type::C_UNIVERSAL       => [
+        Constants::T_CONSTRUCTED => [
+            Constants::C_UNIVERSAL       => [
                 type\Sequence::TAG   => type\Sequence::class,
     //                type\SequenceOf::TAG => type\SequenceOf::class,
                 type\Set::TAG        => type\Set::class,
     //                type\SetOf::TAG      => type\SetOf::class,
             ],
-            Type::C_APPLICATION     => [],
-            Type::C_CONTEXTSPECIFIC => [],
-            Type::C_PRIVATE         => [],
+            Constants::C_APPLICATION     => [],
+            Constants::C_CONTEXTSPECIFIC => [],
+            Constants::C_PRIVATE         => [],
         ],
     ];
     
@@ -162,17 +144,17 @@ class Parser
         $c = ord($data[$pos]);
         
         // Get class
-        if ($c & self::BIT8) {
-            if ($c & self::BIT7) {
-                return Type::C_PRIVATE;
+        if ($c & Constants::BIT8) {
+            if ($c & Constants::BIT7) {
+                return Constants::C_PRIVATE;
             } else {
-                return Type::C_CONTEXTSPECIFIC;
+                return Constants::C_CONTEXTSPECIFIC;
             }
         } else {
-            if ($c & self::BIT7) {
-                return Type::C_APPLICATION;
+            if ($c & Constants::BIT7) {
+                return Constants::C_APPLICATION;
             } else {
-                return Type::C_UNIVERSAL;
+                return Constants::C_UNIVERSAL;
             }
         }
     }
@@ -181,16 +163,16 @@ class Parser
     {
         $c = ord($data[$pos]);
         
-        if ($c & self::BIT6) {
-            return Type::T_CONSTRUCTED;
+        if ($c & Constants::BIT6) {
+            return Constants::T_CONSTRUCTED;
         } else {
-            return Type::T_PRIMITIVE;
+            return Constants::T_PRIMITIVE;
         }
     }
 
     protected static function parseEncodingTag(&$data, &$pos)
     {
-        $tag = (ord($data[$pos++]) & (self::BIT1|self::BIT2|self::BIT3|self::BIT4|self::BIT5));
+        $tag = (ord($data[$pos++]) & (Constants::BIT1|Constants::BIT2|Constants::BIT3|Constants::BIT4|Constants::BIT5));
         
         if ($tag < 31) { return $tag; }
         $tag = 0;
@@ -199,10 +181,10 @@ class Parser
             $c = ord($data[$pos++]);
             
             $tag <<= 7;
-            $tag += (~self::BIT8 & $c);
+            $tag += ($c & Constants::NOT_BIT8);
             
             // Found end marker
-        } while ($c & self::BIT8);
+        } while ($c & Constants::BIT8);
         
         return $tag;
     }
@@ -212,16 +194,16 @@ class Parser
         // Length
         $length = ord($data[$pos++]);
         
-        if ($length === self::BIT8) {
+        if ($length === Constants::BIT8) {
             throw new \RuntimeException("Indefinite length field not implemented");
         }
         
         // Only one byte for length
-        if (($length & self::BIT8) === 0) {
+        if (($length & Constants::BIT8) === 0) {
             return $length;
         }
         
-        $parts = ($length & ~self::BIT8);
+        $parts = ($length & Constants::NOT_BIT8);
         $length = 0;
         
         for ($i=0; $i<$parts; $i++) {

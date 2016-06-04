@@ -6,13 +6,14 @@
  */
 namespace dennisbirkholz\ber\type;
 
-use dennisbirkholz\ber\Parser;
-use dennisbirkholz\ber\Type;
+use \dennisbirkholz\ber\Constants;
+use \dennisbirkholz\ber\Parser;
+use \dennisbirkholz\ber\Type;
 
 class ObjectIdentifier extends Type
 {
-    const TYPE	= Type::T_PRIMITIVE;
-    const CLS	= Type::C_UNIVERSAL;
+    const TYPE	= Constants::T_PRIMITIVE;
+    const CLS	= Constants::C_UNIVERSAL;
     const TAG	= 6;
     
     public function __construct(array $value)
@@ -35,10 +36,10 @@ class ObjectIdentifier extends Type
             }
             
             $values[$n] <<= 7;
-            $values[$n] += (int)(ord($data[$i]) & ~Parser::BIT8);
+            $values[$n] += (int)(ord($data[$i]) & Constants::NOT_BIT8);
             
             // Bit was the last bit
-            if ((ord($data[$i]) & Parser::BIT8) === 0) {
+            if ((ord($data[$i]) & Constants::BIT8) === 0) {
                 $n++;
             }
         }
@@ -85,11 +86,11 @@ class ObjectIdentifier extends Type
         $return = '';
         
         do {
-            $return .= chr(($number & Parser::NOT_BIT8) | Parser::BIT8);
+            $return .= chr(($number & Constants::NOT_BIT8) | Constants::BIT8);
             $number >>= 7;
         } while ($number > 0);
         
-        $return[0] = chr(ord($return[0]) & Parser::NOT_BIT8);
+        $return[0] = chr(ord($return[0]) & Constants::NOT_BIT8);
         
         return strrev($return);
     }

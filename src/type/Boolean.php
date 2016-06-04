@@ -6,28 +6,23 @@
  */
 namespace dennisbirkholz\ber\type;
 
-use dennisbirkholz\ber\Parser;
-use dennisbirkholz\ber\Type;
+use \dennisbirkholz\ber\Constants;
+use \dennisbirkholz\ber\Parser;
+use \dennisbirkholz\ber\Type;
 
 class Boolean extends Type
 {
-    const TYPE	= Type::T_PRIMITIVE;
-    const CLS	= Type::C_UNIVERSAL;
+    const TYPE	= Constants::T_PRIMITIVE;
+    const CLS	= Constants::C_UNIVERSAL;
     const TAG	= 1;
     
     public function __construct($value)
     {
-        if ($value instanceof self) {
-            $this->value = $value->value;
-        }
-        
-        elseif (!is_bool($value)) {
+        if (!is_bool($value)) {
             throw new \InvalidArgumentException('Can not initialize boolean with non-boolean value');
         }
         
-        else {
-            $this->value = $value;
-        }
+        $this->value = $value;
     }
     
     /**

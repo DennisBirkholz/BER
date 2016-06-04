@@ -6,13 +6,14 @@
  */
 namespace dennisbirkholz\ber\type;
 
-use dennisbirkholz\ber\Parser;
-use dennisbirkholz\ber\Type;
+use \dennisbirkholz\ber\Constants;
+use \dennisbirkholz\ber\Parser;
+use \dennisbirkholz\ber\Type;
 
 class Real extends Type
 {
-    const TYPE	= self::T_PRIMITIVE;
-    const CLS	= self::C_UNIVERSAL;
+    const TYPE	= Constants::T_PRIMITIVE;
+    const CLS	= Constants::C_UNIVERSAL;
     const TAG	= 9;
     
     public function __construct($value)
@@ -31,11 +32,11 @@ class Real extends Type
     {
         if (Parser::strlen($data) === 1) {
             // Plus-infinity
-            if (ord($data[0]) === Parser::BIT7) {
+            if (ord($data[0]) === Constants::BIT7) {
                 return new static(INF);
             }
             
-            elseif (ord($data[0]) === (Parser::BIT7 & Parser::BIT1)) {
+            elseif (ord($data[0]) === (Constants::BIT7 & Constants::BIT1)) {
                 return new static(-INF);
             }
             
@@ -45,13 +46,13 @@ class Real extends Type
         }
 
         // Character encoding style
-        if (($data[0] & (Parser::BIT8 & Parser::BIT7)) === 0) {
+        if (($data[0] & (Constants::BIT8 & Constants::BIT7)) === 0) {
         }
         
         $value = 0;
         
         // If data starts with a 1, value is negative, invert the 0 so after shifting the number will be negative
-        if (ord($data[0]) & Parser::BIT8) {
+        if (ord($data[0]) & Constants::BIT8) {
             $value = ~$value;
         }
         
@@ -62,7 +63,7 @@ class Real extends Type
         
         // PHP uses 2-complement to store integers, so no conversion is needed here
         // Negative
-        //if (ord($data[0]) & Parser::BIT8) {
+        //if (ord($data[0]) & Constants::BIT8) {
         //	print "NEGATIVE\n";
         //	$value--;
         //	$value = ~$value;
@@ -88,7 +89,7 @@ class Real extends Type
             $v >>= 8;
         }
         
-        if (($this->value >= 0) && (ord($r[0]) & Parser::BIT8)) {
+        if (($this->value >= 0) && (ord($r[0]) & Constants::BIT8)) {
                 $r = chr(0) . $r;
         }
         

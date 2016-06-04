@@ -33,14 +33,15 @@ class Parser
     protected static $registry = [
         Type::T_PRIMITIVE => [
             Type::C_UNIVERSAL       	=> [
-                type\BitString::TAG   => type\BitString::class,
-                type\Boolean::TAG     => type\Boolean::class,
-                type\Enumerated::TAG  => type\Enumerated::class,
-                type\Integer::TAG     => type\Integer::class,
-                type\Nul::TAG         => type\Nul::class,
-                type\Real::TAG        => type\Real::class,
-                type\OctetString::TAG => type\OctetString::class,
-                type\UTF8String::TAG  => type\UTF8String::class,
+                type\BitString::TAG        => type\BitString::class,
+                type\Boolean::TAG          => type\Boolean::class,
+                type\Enumerated::TAG       => type\Enumerated::class,
+                type\Integer::TAG          => type\Integer::class,
+                type\Nul::TAG              => type\Nul::class,
+                type\ObjectIdentifier::TAG => type\ObjectIdentifier::class,
+                type\Real::TAG             => type\Real::class,
+                type\OctetString::TAG      => type\OctetString::class,
+                type\UTF8String::TAG       => type\UTF8String::class,
             ],
             Type::C_APPLICATION     => [],
             Type::C_CONTEXTSPECIFIC => [],

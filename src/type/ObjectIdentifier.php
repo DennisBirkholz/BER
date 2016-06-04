@@ -49,6 +49,7 @@ class ObjectIdentifier extends Type
         
         $y = $values[0] % 40;
         $x = ($values[0] - $y)/40;
+        for (; $x > 2; $x--) { $y += 40; }
         
         $values[0] = $y;
         array_unshift($values, $x);

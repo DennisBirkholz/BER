@@ -12,7 +12,7 @@ namespace dennisbirkholz\ber;
 class Parser
 {
     // Contains mappings of types to class names
-    protected static $registry = [
+    const MAPPING = [
         Constants::T_PRIMITIVE => [
             Constants::C_UNIVERSAL       => [
                 type\BitString::TAG        => type\BitString::class,
@@ -42,35 +42,20 @@ class Parser
         ],
     ];
     
-    public static function register($path)
-    {
-        if (!file_exists($path) || !is_readable($path)) {
-            throw new \InvalidArgumentException("File '$path' not found, could not include it.");
-        }
-        
-        // Load class file
-        require_once($path);
-        
-        // 
-        $seq = explode(DIRECTORY_SEPARATOR, preg_replace('/\.(class|inc|lib)\.php$/i', '', $path));
-
-        while (count($seq) && ($class = implode('_', $seq)) && !class_exists($class)) {
-            array_shift($seq);
-        }
-        
-        if (count($seq) === 0) {
-            throw new InvalidArgumentException("No class found for file '$path'.");
-        }
-        
-        self::$registry[$class::TYPE][$class::CLS][$class::TAG] = $class;
+    /**
+     * Additional mapping to use with this parse.
+     * Structure is same as with the MAPPING constant
+     * @var array
+     */
+    protected $mapping = [];
+    
+    public function __construct($mapping = []) {
+        $this->mapping = $mapping;
     }
     
-    public static function init()
+    public function parse($data)
     {
-    }
-    
-    public function parse($data, $context = array())
-    {
+        $mapping = self::MAPPING;
         $elements = self::parseToArray($data);
         $r = array();
         
@@ -80,20 +65,20 @@ class Parser
             $tag = $element['tag'];
             
             $newclass = false;
-            if (isset($context[$type]) && isset($context[$type][$class]) && isset($context[$type][$class][$tag])) {
-                $newclass = $context[$type][$class][$tag];
+            if (isset($this->mapping[$type][$class][$tag])) {
+                $newclass = $this->mapping[$type][$class][$tag];
             }
             
-            elseif (isset(self::$registry[$type][$class][$tag])) {
-                $newclass = self::$registry[$type][$class][$tag];
+            elseif (isset($mapping[$type][$class][$tag])) {
+                $newclass = $mapping[$type][$class][$tag];
             }
             
             if ($newclass) {
-                $r[] = $newclass::parse($this, self::substr($data, $element['pos'], $element['length']));
+                $r[] = $newclass::parse($this, Parser::substr($data, $element['pos'], $element['length']));
             }
             
             else {
-                $r[] = new type\Placeholder($type, $class, $tag, substr($data, $element['pos'], $element['length']));
+                $r[] = new type\Placeholder($type, $class, $tag, Parser::substr($data, $element['pos'], $element['length']));
             }
         }
         
@@ -114,11 +99,11 @@ class Parser
      * @param $pos Start at this position in the stream instead of the first octet
      * @param $length Parse only $length octets instead to the end of the stream
      */
-    public static function parseToArray(&$data, $pos = 0, $length = null)
+    public static function parseToArray($data, $pos = 0, $length = null)
     {
         $struct = array();
         
-        if (is_null($length)) { $length = strlen($data)-$pos; }
+        if (is_null($length)) { $length = Parser::strlen($data)-$pos; }
         $max = $pos+$length;
         
         while ($pos < $max) {
@@ -139,7 +124,7 @@ class Parser
         return $struct;
     }
     
-    protected static function parseEncodingClass(&$data, &$pos)
+    protected static function parseEncodingClass($data, &$pos)
     {
         $c = ord($data[$pos]);
         
@@ -159,7 +144,7 @@ class Parser
         }
     }
     
-    protected static function parseEncodingType(&$data, &$pos)
+    protected static function parseEncodingType($data, &$pos)
     {
         $c = ord($data[$pos]);
         
@@ -170,7 +155,7 @@ class Parser
         }
     }
 
-    protected static function parseEncodingTag(&$data, &$pos)
+    protected static function parseEncodingTag($data, &$pos)
     {
         $tag = (ord($data[$pos++]) & (Constants::BIT1|Constants::BIT2|Constants::BIT3|Constants::BIT4|Constants::BIT5));
         
@@ -189,7 +174,7 @@ class Parser
         return $tag;
     }
     
-    protected static function parseEncodingLength(&$data, &$pos)
+    protected static function parseEncodingLength($data, &$pos)
     {
         // Length
         $length = ord($data[$pos++]);

@@ -4,7 +4,7 @@
  * All rights reserved.
  * For the license to use this code, see the bundled LICENSE file.
  */
-namespace dennisbirkholz\ber;
+namespace DennisBirkholz\BER;
 
 abstract class Type implements TypeInterface
 {

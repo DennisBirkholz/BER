@@ -4,11 +4,11 @@
  * All rights reserved.
  * For the license to use this code, see the bundled LICENSE file.
  */
-namespace dennisbirkholz\ber\type;
+namespace DennisBirkholz\BER\type;
 
-use \dennisbirkholz\ber\Constants;
-use \dennisbirkholz\ber\Parser;
-use \dennisbirkholz\ber\Type;
+use \DennisBirkholz\BER\Constants;
+use \DennisBirkholz\BER\Parser;
+use \DennisBirkholz\BER\Type;
 
 class Sequence extends Type implements \ArrayAccess
 {

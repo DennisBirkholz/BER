@@ -4,9 +4,9 @@
  * All rights reserved.
  * For the license to use this code, see the bundled LICENSE file.
  */
-namespace dennisbirkholz\ber\type;
+namespace DennisBirkholz\BER\type;
 
-use \dennisbirkholz\ber\Parser;
+use \DennisBirkholz\BER\Parser;
 
 class ObjectIdentifierTest extends \PHPUnit_Framework_TestCase
 {

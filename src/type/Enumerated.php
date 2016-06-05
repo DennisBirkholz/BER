@@ -4,9 +4,9 @@
  * All rights reserved.
  * For the license to use this code, see the bundled LICENSE file.
  */
-namespace dennisbirkholz\ber\type;
+namespace DennisBirkholz\BER\type;
 
-use \dennisbirkholz\ber\Constants;
+use \DennisBirkholz\BER\Constants;
 
 /**
  * An enumerated cannot be instantiated directly as it does not know the valid choices.

@@ -4,7 +4,7 @@
  * All rights reserved.
  * For the license to use this code, see the bundled LICENSE file.
  */
-namespace dennisbirkholz\ber;
+namespace DennisBirkholz\BER;
 
 /**
  * @see http://www.itu.int/ITU-T/studygroups/com17/languages/X.690-0207.pdf

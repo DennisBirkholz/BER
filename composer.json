@@ -1,6 +1,6 @@
 {
-    "name": "dennisbirkholz/ber-parser",
-    "description": "Parser for Basic Encoding Rules (BER) / Distinguished Encoding Rules (DER) encoded data as used by ASN.1",
+    "name": "DennisBirkholz/BER",
+    "description": "Parser and Generator for Basic Encoding Rules (BER) / Distinguished Encoding Rules (DER) encoded data as used by ASN.1",
     "license": "GPL3",
     "authors": [{
         "name": "Dennis Birkholz",
@@ -8,12 +8,12 @@
     }],
     "autoload": {
         "psr-4": {
-            "dennisbirkholz\\ber\\": "src/"
+            "DennisBirkholz\\BER\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "dennisbirkholz\\ber\\": "tests/"
+            "DennisBirkholz\\BER\\": "tests/"
         }
     },
     "require": {

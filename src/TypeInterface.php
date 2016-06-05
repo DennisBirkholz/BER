@@ -4,7 +4,7 @@
  * All rights reserved.
  * For the license to use this code, see the bundled LICENSE file.
  */
-namespace dennisbirkholz\ber;
+namespace DennisBirkholz\BER;
 
 /**
  * @author Dennis Birkholz <dennis@birkholz.biz>
@@ -16,7 +16,7 @@ interface TypeInterface
      * The supplied parser is required so elements that can contain
      *  other elements can delegate parsing to the parser instance.
      * 
-     * @param \dennisbirkholz\ber\Parser $parser
+     * @param \DennisBirkholz\BER\Parser $parser
      * @param string $data
      * @return static
      */

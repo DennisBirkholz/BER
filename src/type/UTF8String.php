@@ -4,7 +4,7 @@
  * All rights reserved.
  * For the license to use this code, see the bundled LICENSE file.
  */
-namespace dennisbirkholz\ber\type;
+namespace DennisBirkholz\BER\type;
 
 // Only encoding octetstrings as primitive and not constructed
 class UTF8String extends OctetString

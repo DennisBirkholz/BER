@@ -1,5 +1,5 @@
 {
-    "name": "DennisBirkholz/BER",
+    "name": "dennisbirkholz/ber",
     "description": "Parser and Generator for Basic Encoding Rules (BER) / Distinguished Encoding Rules (DER) encoded data as used by ASN.1",
     "license": "GPL3",
     "authors": [{

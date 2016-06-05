@@ -251,4 +251,13 @@ class Sequence extends Type implements \ArrayAccess
     {
         return $this->value;
     }
+    
+    public function export($level = 0, $width = 30)
+    {
+        $str = sprintf("%-".$width."s\n", str_repeat(' ', $level).preg_replace('/^\\\\?([^\\\\]+\\\\)*/', '', static::class));
+        foreach ($this->value as $value) {
+            $str .= $value->export($level+1, $width);
+        }
+        return $str;
+    }
 }

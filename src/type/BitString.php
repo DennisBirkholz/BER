@@ -65,4 +65,25 @@ class BitString extends Type
         
         return ((\ord($this->value[$char]) & (1 << $bit)) !== 0);
     }
+    
+    public function export($level = 0, $width = 30)
+    {
+        $str = sprintf("%-".$width."s (%d)", str_repeat(' ', $level).preg_replace('/^\\\\?([^\\\\]+\\\\)*/', '', self::class), Parser::strlen($this->value));
+        
+        $pos = 0;
+        $lines = ceil(Parser::strlen($this->value)/16);
+        for ($line=0; $line<$lines; $line++) {
+            $chars = ($line+1 == $lines ? Parser::strlen($this->value) % 16 : 16);
+            
+            $str .= sprintf("\n%s%04x", str_repeat(' ', $level+1), $pos); 
+            
+            for ($char=0; $char<$chars; $char++) {
+                $str .= sprintf(" %02x", ord($this->value[$pos+$char]));
+            }
+            
+            $pos += 16;
+        }
+        
+        return $str . "\n";
+    }
 }

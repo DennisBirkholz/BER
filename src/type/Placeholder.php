@@ -31,4 +31,12 @@ class Placeholder extends Type
     public static function parse(Parser $parser, $data)
     {
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function export($level = 0, $width = 30)
+    {
+        return sprintf("%-".$width."s: type: %s, class: %s, tag: %s, value: %s\n", str_repeat(' ', $level).preg_replace('/^\\\\?([^\\\\]+\\\\)*/', '', static::class), $this->type, $this->class, $this->tag, $this->value);
+    }
 }

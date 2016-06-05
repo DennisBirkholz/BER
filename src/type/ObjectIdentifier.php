@@ -94,4 +94,12 @@ class ObjectIdentifier extends Type
         
         return strrev($return);
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function export($level = 0, $width = 30)
+    {
+        return sprintf("%-".$width."s: %s\n", str_repeat(' ', $level).preg_replace('/^\\\\?([^\\\\]+\\\\)*/', '', static::class), implode('.', $this->value));
+    }
 }

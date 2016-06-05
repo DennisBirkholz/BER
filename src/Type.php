@@ -11,8 +11,8 @@ abstract class Type implements TypeInterface
     protected $value = null;
     
     /**
-    * Get the value stored in that type
-    */
+     * {@inheritdoc}
+     */
     public function value()
     {
         return $this->value;
@@ -32,5 +32,13 @@ abstract class Type implements TypeInterface
         return Encoder::encodeIdentifier(static::TYPE, static::CLS, static::TAG)
             . Encoder::encodeLength(Parser::strlen($encoding))
             . $encoding;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function export($level = 0, $width = 30)
+    {
+        return sprintf("%-".$width."s: %s\n", str_repeat(' ', $level).preg_replace('/^\\\\?([^\\\\]+\\\\)*/', '', static::class), $this->value);
     }
 }

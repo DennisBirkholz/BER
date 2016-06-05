@@ -28,13 +28,27 @@ class Nul extends Type
         return new static(null);
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function encodeData()
     {
         return '';
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function value()
     {
         return null;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function export($level = 0, $width = 30)
+    {
+        return sprintf("%-".$width."s: %s\n", str_repeat(' ', $level).preg_replace('/^\\\\?([^\\\\]+\\\\)*/', '', static::class), 'NULL');
     }
 }

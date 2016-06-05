@@ -38,4 +38,13 @@ interface TypeInterface
      * Get the value contained in the element.
      */
     public function value();
+    
+    /**
+     * Debug helper
+     * 
+     * @param int $level
+     * @param int $width
+     * @return string
+     */
+    public function export($level = 0, $width = 30);
 }

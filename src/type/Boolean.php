@@ -26,10 +26,7 @@ class Boolean extends Type
     }
     
     /**
-     * @param string $data
-     * @param int $pos
-     * @param int $length
-     * @return static
+     * {@inheritdoc}
      */
     public static function parse(Parser $parser, $data)
     {
@@ -40,7 +37,18 @@ class Boolean extends Type
         return new static((ord($data[0]) !== 0));
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function encodeData() {
         return chr($this->value ? 0xFF : 0x00);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function export($level = 0, $width = 30)
+    {
+        return sprintf("%-".$width."s: %s\n", str_repeat(' ', $level).preg_replace('/^\\\\?([^\\\\]+\\\\)*/', '', static::class), ($this->value ? 'TRUE' : 'FALSE'));
     }
 }

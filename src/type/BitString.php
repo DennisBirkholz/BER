@@ -17,13 +17,16 @@ class BitString extends Type
     const CLS	= Constants::C_UNIVERSAL;
     const TAG	= 3;
     
-    // A list of booleans
-    protected $value = array();
+    /**
+     * @var int
+     */
+    protected $unused = 0;
     
     
-    public function __construct(array $data)
+    public function __construct($data, $unusedbits = 0)
     {
         $this->value = $data;
+        $this->unused = $unusedbits;
     }
     
     /**
@@ -37,49 +40,29 @@ class BitString extends Type
             throw new \RuntimeException('Parse error, number of unused bits (' . $unusedbits . ') exceeds allowed bounds of 0 <= x <= 7!');
         }
         
-        $length = Parser::strlen($data);
-        $value = [];
-        
-        for($i=1; $i<$length; $i++) {
-            $c = ord($data[$i]);
-            
-            // Walk each bit
-            for ($j=0; $j<8; $j++) {
-                // Skip unused bits at end of string
-                if (($i+1 === $length) && ($j >= (8 - $unusedbits))) {
-                    break;
-                }
-                
-                $value[] = (boolean)($c & Constants::BIT8);
-                $c <<= 1;
-            }
-        }
-        
-        return new static($value);
+        return new static(Parser::substr($data, 1), $unusedbits);
     }
 
     public function encodeData()
     {
-        // Number of bits not set in the last part
-        $l = 8 - (count($this->value) % 8);
-        // 8 means byte is completely used
-        if ($l === 8) { $l = 0; }
-        
-        // Encode as 8bit integer
-        $r = chr($l & 0xFF);
-        
-        for ($i=0; $i<count($this->value); $i++) {
-            if (($i % 8) === 0) { $c = 0; }
-            $c <<= 1;
-            if ($this->value[$i]) { $c += 1; }
-            if (($i % 8) === 7) { $r .= chr($c); }
+        return chr($this->unused & 0xFF) . $this->value;
+    }
+    
+    public function getBit($number)
+    {
+        if ($number < 0) {
+            throw new \InvalidArgumentException("Invalid negative bit offset.");
         }
         
-        if ($l > 0) {
-            $c <<= $l;
-            $r .= chr($c);
+        $lastbit = (Parser::strlen($this->value)*8 - $this->unused - 1);
+        if ($number > $lastbit) {
+            throw new \InvalidArgumentException("Last available bit is $lastbit but $number requested.");
         }
         
-        return $r;
+        $bit = $number % 8;
+        $char = ($number - $bit)/8;
+        $bit = 7 - $bit;
+        
+        return ((\ord($this->value[$char]) & (1 << $bit)) !== 0);
     }
 }

@@ -10,116 +10,92 @@ use \dennisbirkholz\ber\Parser;
 
 class BitStringTest extends \PHPUnit_Framework_TestCase
 {
-    public function testBitString1Bit()
+    /**
+     * @var string
+     */
+    private $encoded;
+    
+    /**
+     * @var string
+     */
+    private $decoded;
+    
+    public function setUp()
     {
-        $this->helper(1);
+        $this->encoded = TestHelper::hex2str('0x0307040A3B5F291CD0');
+        $this->decoded = TestHelper::hex2str('0x0A3B5F291CD0');
     }
     
-    public function testBitString2Bit()
+    /**
+     * @test
+     */
+    public function testEncode()
     {
-        $this->helper(2);
+        $bitstring = new BitString($this->decoded, 4);
+        $this->assertSame($this->encoded, $bitstring->encode());
     }
     
-    public function testBitString3Bit()
+    /**
+     * @test
+     */
+    public function testParse()
     {
-        $this->helper(3);
+        $parser = new Parser();
+        $bitstring = $parser->parse($this->encoded)[0];
+        $this->assertInstanceOf(BitString::class, $bitstring);
+        $this->assertSame($this->decoded, $bitstring->value());
     }
     
-    public function testBitString4Bit()
+    /**
+     * @test
+     */
+    public function testGetBit()
     {
-        $this->helper(4);
+        $bitstring = new BitString($this->decoded, 4);
+        // 0x0 = 0000
+        $this->assertFalse($bitstring->getBit(0));
+        $this->assertFalse($bitstring->getBit(1));
+        $this->assertFalse($bitstring->getBit(2));
+        $this->assertFalse($bitstring->getBit(3));
+        // 0xA = 1010
+        $this->assertTrue($bitstring->getBit(4));
+        $this->assertFalse($bitstring->getBit(5));
+        $this->assertTrue($bitstring->getBit(6));
+        $this->assertFalse($bitstring->getBit(7));
+        // 0x3 = 0011
+        $this->assertFalse($bitstring->getBit(8));
+        $this->assertFalse($bitstring->getBit(9));
+        $this->assertTrue($bitstring->getBit(10));
+        $this->assertTrue($bitstring->getBit(11));
+        // 0xB = 1011
+        $this->assertTrue($bitstring->getBit(12));
+        $this->assertFalse($bitstring->getBit(13));
+        $this->assertTrue($bitstring->getBit(14));
+        $this->assertTrue($bitstring->getBit(15));
+        // 0xD = 1101
+        $this->assertTrue($bitstring->getBit(40));
+        $this->assertTrue($bitstring->getBit(41));
+        $this->assertFalse($bitstring->getBit(42));
+        $this->assertTrue($bitstring->getBit(43));
     }
     
-    public function testBitString5Bit()
+    /**
+     * @test
+     */
+    public function testInvalidBit1()
     {
-        $this->helper(5);
+        $this->expectException(\Exception::class);
+        $bitstring = new BitString($this->decoded, 4);
+        $this->assertFalse($bitstring->getBit(-1));
     }
     
-    public function testBitString6Bit()
+    /**
+     * @test
+     */
+    public function testInvalidBit2()
     {
-        $this->helper(6);
-    }
-    
-    public function testBitString7Bit()
-    {
-        $this->helper(7);
-    }
-    
-    public function testBitString8Bit()
-    {
-        $this->helper(8);
-    }
-    
-    public function testBitString9Bit()
-    {
-        $this->helper(9);
-    }
-    
-    public function testBitString10Bit()
-    {
-        $this->helper(10);
-    }
-    
-    protected function helper($bits)
-    {
-        $max = (0x01 << $bits) - 1;
-        
-        for ($i=0; $i<=$max; $i++) {
-            $values = $this->parseValueToArray($i, $bits);
-            $parsed = $this->encodeValuefromArray($values, $bits);
-            
-            $t = new BitString($values);
-            $encoded = $t->encode();
-            
-            $this->assertEquals($encoded, $parsed, 'Encoding mismatch: is ' . TestHelper::str2hex($encoded) . ', should ' . TestHelper::str2hex($parsed));
-            
-            $parser = new Parser();
-            $t = $parser->parse($parsed)[0];
-            $this->assertEquals($values, $t->value(), 'Decoding mismatch: is ' . TestHelper::arr2bin($t->value()) . ', should ' . TestHelper::arr2bin($values));
-        }
-    }
-    
-    protected function parseValueToArray($value, $bits)
-    {
-        $r = array();
-        $m = 0x01;
-        
-        for ($i=0; $i<$bits; $i++) {
-            $r[$i] = (boolean)($value & $m);
-            $m <<= 1;
-        }
-        
-        $s = '';
-        for ($i=count($r)-1; $i>=0; $i--) {
-            $s .= ($r[$i] ? '1' : '0');
-        }
-        
-        return $r;
-    }
-    
-    protected function encodeValuefromArray($values, $bits)
-    {
-        $rest = (($bits % 8) ? 8 - ($bits % 8) : 0);
-        $rounds = ceil($bits / 8);
-        $return = chr($rest);
-        
-        for ($round=1; $round<=$rounds; $round++) {
-            $byte = 0;
-            
-            for ($pos=7; $pos>=0; $pos--) {
-                // Abort
-                if (($round == $rounds) && ($rest > 0) && ($pos < $rest)) { break; }
-                
-                $bool = array_shift($values);
-                
-                if ($bool) {
-                    $byte += (0x01<<$pos);
-                }
-            }
-            
-            $return .= chr($byte);
-        }
-        
-        return chr(0x03) . chr($rounds+1) . $return;
+        $this->expectException(\Exception::class);
+        $bitstring = new BitString($this->decoded, 4);
+        $this->assertFalse($bitstring->getBit(44));
     }
 }

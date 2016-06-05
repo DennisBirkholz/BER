@@ -25,6 +25,10 @@ class BitString extends Type
     
     public function __construct($data, $unusedbits = 0)
     {
+        if (($unusedbits < 0) || ($unusedbits > 7)) {
+            throw new \InvalidArgumentException('Number of unused bits (' . $unusedbits . ') exceeds allowed bounds of 0 <= x <= 7!');
+        }
+        
         $this->value = $data;
         $this->unused = $unusedbits;
     }
@@ -37,7 +41,7 @@ class BitString extends Type
         $unusedbits = ord($data[0]);
         
         if (($unusedbits < 0) || ($unusedbits > 7)) {
-            throw new \RuntimeException('Parse error, number of unused bits (' . $unusedbits . ') exceeds allowed bounds of 0 <= x <= 7!');
+            throw new \InvalidArgumentException('Parse error, number of unused bits (' . $unusedbits . ') exceeds allowed bounds of 0 <= x <= 7!');
         }
         
         return new static(Parser::substr($data, 1), $unusedbits);
@@ -66,6 +70,9 @@ class BitString extends Type
         return ((\ord($this->value[$char]) & (1 << $bit)) !== 0);
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function export($level = 0, $width = 30)
     {
         $str = sprintf("%-".$width."s (%d)", str_repeat(' ', $level).preg_replace('/^\\\\?([^\\\\]+\\\\)*/', '', self::class), Parser::strlen($this->value));
